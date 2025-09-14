@@ -1,0 +1,34 @@
+{
+  "characters": [
+    {
+      "id": 1,
+      "name": "Mr. Cute",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/15/Cat_August_2010-4.jpg",
+      "votes": 0
+    },
+    {
+      "id": 2,
+      "name": "Mx. Monkey",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Standing_capuchin_monkey.jpg",
+      "votes": 0
+    },
+    {
+      "id": 3,
+      "name": "Ms. Zebra",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Chapman-zebra.jpeg",
+      "votes": 0
+    },
+    {
+      "id": 4,
+      "name": "Dr. Lion",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg",
+      "votes": 0
+    },
+    {
+      "id": 5,
+      "name": "Prof. Panda",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Panda.jpg",
+      "votes": 0
+    }
+  ]
+}

@@ -6,9 +6,13 @@ Vote for the cutest animal! This mini web app practices array iteration, DOM man
 
 - See a list of all animal names (GET /characters)
 - Click an animal to view details (image and votes) (GET /characters/:id)
-- Increment votes locally (no persistence, per spec)
-- Bonus: reset votes to 0 (local)
+- Increment and reset votes with persistence (PATCH to server)
 - Bonus: add a new animal via form (POST to server when available; gracefully falls back to local add)
+
+### Accessibility
+
+- Keyboard navigation for the animal list (Enter/Space activate selected animal)
+- `aria-selected` on active list item and clear status messages for screen readers
 
 ## Tech Stack
 
@@ -39,8 +43,14 @@ Vote for the cutest animal! This mini web app practices array iteration, DOM man
 
      # Option B: Python http.server
      python3 -m http.server 8080
-     # then open http://localhost:8080/index.html
-     ```
+    # then open http://localhost:8080/index.html
+    ```
+
+If your frontend and backend run on different ports, you can point the app to your API using a query parameter:
+
+```
+http://127.0.0.1:8080/index.html?api=http://localhost:3000
+```
 
 ## Project Structure
 
@@ -57,16 +67,21 @@ Vote for the cutest animal! This mini web app practices array iteration, DOM man
 - `app.js`
   - Fetches all characters from `GET http://localhost:3000/characters` and renders the list
   - On list item click, fetches details from `GET /characters/:id` and renders a single detail panel
-  - Vote button increments the on-screen votes for the current animal without saving to the server
-  - Reset button sets the on-screen votes back to 0
+  - Vote button increments the on-screen votes for the current animal and persists via `PATCH /characters/:id`
+  - Reset button sets the on-screen votes back to 0 and persists via `PATCH /characters/:id`
   - Add-animal form attempts `POST /characters` to persist; if the server rejects or is offline, it falls back to a local-only add with a synthetic id
   - A status bar communicates loading/errors for a better UX
+
+### Notes on Data Types
+
+- Votes are always coerced to numbers in the UI to avoid string concatenation issues.
 
 ## API
 
 - GET /characters
 - GET /characters/:id
 - POST /characters (used for bonus; app handles server errors gracefully)
+- PATCH /characters/:id (persist votes)
 
 ### Configure the API Base
 
@@ -141,7 +156,23 @@ Licensing: These are Creative Commons-licensed or public domain images from Wiki
 - If you see "Failed to load animals. Is json-server running?", ensure you started json-server on port 3000.
 - Some corporate networks block `gfycat.com` images. If images fail to load, try different image URLs when adding animals.
 
+## GitHub and Deployment
+
+1. Initialize git, commit, and push:
+
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit: Flatacuties with GET list, detail view, local votes, reset + add form"
+   git branch -M main
+   git remote add origin <your-private-github-repo-url>
+   git push -u origin main
+   ```
+
+2. Ensure your repository is private and add your TM as a collaborator for grading.
+
+3. Optionally deploy the static frontend (e.g., GitHub Pages or Netlify). Note that the backend is json-server and should be run locally for grading.
+
 ## Notes
 
-- Votes are intentionally not persisted to the server to meet the challenge specification.
-- You can extend this project by persisting votes (PATCH), deleting animals, or adding search/filtering.
+- Votes are now persisted to the server. You can extend this project further by deleting animals, or adding search/filtering.

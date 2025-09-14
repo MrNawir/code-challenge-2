@@ -73,6 +73,26 @@ async function loadAnimalDetailsById(id) {
   }
 }
 
+// Persistence: PATCH votes to server
+async function updateVotesOnServer(id, votes) {
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ votes: Number(votes) || 0 })
+    });
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+    const updated = await res.json();
+    // Update local cache
+    animals = animals.map(a => a.id === updated.id ? { ...a, votes: Number(updated.votes) || 0 } : a);
+    return updated;
+  } catch (err) {
+    console.error(err);
+    setStatus('Failed to persist votes.', 'warning');
+    throw err;
+  }
+}
+
 // Render: list of animals
 function renderAnimalList() {
   animalList.innerHTML = '';
@@ -80,8 +100,17 @@ function renderAnimalList() {
     const li = document.createElement('li');
     li.textContent = animal.name;
     li.setAttribute('data-id', animal.id);
+    // Accessibility: allow keyboard navigation
+    li.tabIndex = 0;
+    li.setAttribute('aria-label', `View ${animal.name} details`);
     li.addEventListener('click', () => {
       loadAnimalDetailsById(animal.id);
+    });
+    li.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        loadAnimalDetailsById(animal.id);
+      }
     });
     animalList.appendChild(li);
   });
@@ -91,34 +120,55 @@ function renderAnimalList() {
 function showAnimalDetails(animal) {
   currentAnimal = { ...animal }; // local copy to allow non-persistent voting
   animalName.textContent = animal.name;
-  animalImage.src = animal.image;
-  animalImage.alt = `${animal.name} image`;
-  animalImage.style.display = 'block';
-  animalVotes.textContent = animal.votes;
+  if (animal.image) {
+    animalImage.src = animal.image;
+    animalImage.alt = `${animal.name} image`;
+    animalImage.style.display = 'block';
+  } else {
+    animalImage.removeAttribute('src');
+    animalImage.alt = '';
+    animalImage.style.display = 'none';
+  }
+  // Ensure votes render as a number
+  const numericVotes = Number(animal.votes) || 0;
+  currentAnimal.votes = numericVotes;
+  animalVotes.textContent = numericVotes;
   // Highlight selected list item
   const items = animalList.querySelectorAll('li');
   items.forEach(li => {
     if (Number(li.getAttribute('data-id')) === animal.id) {
       li.classList.add('active');
+      li.setAttribute('aria-selected', 'true');
     } else {
       li.classList.remove('active');
+      li.setAttribute('aria-selected', 'false');
     }
   });
 }
 
-// Events: voting (no persistence per spec)
-voteBtn.addEventListener('click', () => {
+// Events: voting (persist to server)
+voteBtn.addEventListener('click', async () => {
   if (currentAnimal) {
     currentAnimal.votes++;
     animalVotes.textContent = currentAnimal.votes;
+    try {
+      await updateVotesOnServer(currentAnimal.id, currentAnimal.votes);
+      setStatus('Saved!', 'info');
+      setTimeout(() => setStatus(''), 1000);
+    } catch (_) {}
   }
 });
 
-// Events: reset votes (bonus)
-resetBtn.addEventListener('click', () => {
+// Events: reset votes (persist to server)
+resetBtn.addEventListener('click', async () => {
   if (currentAnimal) {
     currentAnimal.votes = 0;
     animalVotes.textContent = 0;
+    try {
+      await updateVotesOnServer(currentAnimal.id, 0);
+      setStatus('Saved!', 'info');
+      setTimeout(() => setStatus(''), 1000);
+    } catch (_) {}
   }
 });
 

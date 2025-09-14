@@ -2,6 +2,23 @@
 
 Vote for the cutest animal! This mini web app practices array iteration, DOM manipulation, event handling, and communication with a local JSON server.
 
+## Learning Goals
+
+- Practice array iteration, DOM manipulation, event handling, and client–server communication.
+
+## Requirements
+
+- Have a well-written README file.
+- Fetch data from a local server running a JSON DB server.
+
+## Core Deliverables
+
+As a user, you can:
+
+1. See a list of all animal names from `GET /characters`.
+2. Click an animal’s name to see its details (image and number of votes) via `GET /characters/:id`.
+3. Add votes for the selected animal and display the updated number of votes. In this implementation, votes are persisted via `PATCH /characters/:id`.
+
 ## Features
 
 - See a list of all animal names (GET /characters)
@@ -17,39 +34,31 @@ Vote for the cutest animal! This mini web app practices array iteration, DOM man
 ## Tech Stack
 
 - HTML, CSS, JavaScript (vanilla)
-- json-server (for a local REST API)
+- VS Code Live Server extension (for serving the static frontend)
+- json-server via npx (for a local REST API)
 
 ## Getting Started
 
-1. Install json-server globally (if not already):
+1. Install dependencies (this project vendors json-server locally):
    ```bash
-   npm install -g json-server
+   npm install
    ```
 
-2. Start the backend:
+2. Start the backend API with npx:
    ```bash
-   json-server --watch db.json --port 3000
+   npx json-server --watch db.json --port 3000
    ```
    - Verify at: http://localhost:3000/characters
 
-3. Open the frontend:
-   - Simply open `index.html` in your browser, or use a lightweight static server:
-     ```bash
-     # Option A: VS Code Live Server extension (default port is 5500)
-     # If your Live Server runs on 5500, open:
-     #   http://127.0.0.1:5500/index.html
-     # If your Live Server runs on 5501, open and pass the API base via query param:
-     #   http://127.0.0.1:5501/index.html?api=http://localhost:3000
-
-     # Option B: Python http.server
-     python3 -m http.server 8080
-    # then open http://localhost:8080/index.html
-    ```
+3. Open the frontend with VS Code Live Server:
+   - In VS Code, right–click `index.html` and choose "Open with Live Server".
+   - By default Live Server opens at http://127.0.0.1:5500/index.html
+   - If your Live Server uses a different port (e.g., 5501), you can pass the API base via `?api=` (see below).
 
 If your frontend and backend run on different ports, you can point the app to your API using a query parameter:
 
 ```
-http://127.0.0.1:8080/index.html?api=http://localhost:3000
+http://127.0.0.1:5500/index.html?api=http://localhost:3000
 ```
 
 ## Project Structure
@@ -97,7 +106,7 @@ The app supports configuring the API base URL via a query string parameter or lo
 To run json-server on 5501 instead of 3000:
 
 ```bash
-json-server --watch db.json --port 5501
+npx json-server --watch db.json --port 5501
 ```
 
 ## Assets (FOSS Images)
@@ -175,4 +184,5 @@ Licensing: These are Creative Commons-licensed or public domain images from Wiki
 
 ## Notes
 
-- Votes are now persisted to the server. You can extend this project further by deleting animals, or adding search/filtering.
+- We use only VS Code Live Server for the frontend and `npx json-server` for the backend (no global installs or other servers required).
+- Votes are persisted to the server. You can extend this project further by deleting animals, or adding search/filtering.
